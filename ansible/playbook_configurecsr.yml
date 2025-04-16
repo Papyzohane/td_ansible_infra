@@ -1,4 +1,4 @@
-- name: Acte 2 - config_interfaces
+- name: Acte 2 - Configuration
   hosts: csr1000
   gather_facts: false
 
@@ -16,4 +16,13 @@
            ipv4:
            - address: 192.168.4.1/24
        state: merged
-           
+
+   - name: config_dhcp
+     cisco.ios.ios_config:
+       lines:
+       - no ip dhcp pool dhcppool
+       - ip dhcp pool dhcppool
+       - network 192.168.2.0 255.255.255.0
+       - default-router 192.168.2.1 
+       - exit
+       - service dhcp
