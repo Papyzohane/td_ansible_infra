@@ -26,3 +26,19 @@
        - default-router 192.168.2.1 
        - exit
        - service dhcp
+
+   - name: config_natoutside
+     cisco.ios.ios_config:
+       parents: interface GigabitEthernet1
+       lines:
+       - ip nat outside
+
+   - name: config_natinside
+     cisco.ios.ios_config:
+     items:
+      - interface GigabitEthernet2
+      - interface GigabitEthernet3
+      - interface GigabitEthernet4
+     parents: "{{ items }}"
+     lines:
+       - ip nat inside
