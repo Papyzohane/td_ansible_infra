@@ -21,24 +21,37 @@
      cisco.ios.ios_config:
        lines:
        - no ip dhcp pool dhcppool
-       - ip dhcp pool dhcppool
-       - network 192.168.2.0 255.255.255.0
-       - default-router 192.168.2.1 
-       - exit
-       - service dhcp
 
-   - name: config_natoutside
+   - name: config_dhcp2
      cisco.ios.ios_config:
-       parents: interface GigabitEthernet1
+       parents: ["ip dhcp pool dhcppool"]
        lines:
-       - ip nat outside
+         - "network 192.168.2.0 255.255.255.0"
+         - "default-router 192.168.2.1"
 
-   - name: config_natinside
+   - name: config_nat_outside
      cisco.ios.ios_config:
-     items:
-      - interface GigabitEthernet2
-      - interface GigabitEthernet3
-      - interface GigabitEthernet4
-     parents: "{{ items }}"
-     lines:
-       - ip nat inside
+       parents: 
+         - "interface GigabitEthernet1"
+       lines:
+         - "ip nat outside"
+
+   - name: config_nat_inside
+     cisco.ios.ios_config:
+       parents: "{{ item }}"
+       lines:          
+         - "ip nat inside"
+     loop:
+       - "interface GigabitEthernet2"
+       - "interface GigabitEthernet3"
+       - "interface GigabitEthernet4"
+ 
+   - name: config_acl
+     cisco.ios.ios_config:
+       lines:
+         - access-list 10 permit 192.168.2.0 0.0.0.255
+  
+   - name: config_nat
+     cisco.ios.ios_config:
+       lines:
+         - ip nat inside source list 10 interface GigabitEthernet1 overload
