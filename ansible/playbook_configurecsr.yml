@@ -17,6 +17,18 @@
            - address: 192.168.4.1/24
        state: merged
 
+   - name: config_activation_interfaces
+     cisco.ios.ios_interfaces:
+       config:
+         - name: GigabitEthernet1
+           enabled: true
+         - name: GigabitEthernet1
+           enabled: true
+         - name: GigabitEthernet1
+           enabled: true
+         - name: GigabitEthernet1
+           enabled: true
+
    - name: config_dhcp
      cisco.ios.ios_config:
        lines:
@@ -50,8 +62,16 @@
      cisco.ios.ios_config:
        lines:
          - access-list 10 permit 192.168.2.0 0.0.0.255
+         - access-list 10 permit 192.168.3.0 0.0.0.255
+         - access-list 10 permit 192.168.4.0 0.0.0.255
   
    - name: config_nat
      cisco.ios.ios_config:
        lines:
          - ip nat inside source list 10 interface GigabitEthernet1 overload
+
+   - name: config_pat
+     cisco.ios.ios_config:
+       lines:
+         - ip nat inside source static tcp 192.168.3.2 80 interface GigabitEthernet1 80
+         - ip nat inside source static tcp 192.168.4.2 22 interface GigabitEthernet1 2222
